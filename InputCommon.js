@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Input } from 'semantic-ui-react';
 
-const WAIT_INTERVAL = 1000;
+const WAIT_INTERVAL = 500;
 const ENTER_KEY = 13;
 
 export default class InputComponent extends Component {
@@ -13,19 +13,22 @@ export default class InputComponent extends Component {
       key: props.name,
       value: props.value
     };
+    this.inputRef = React.createRef();
     this.timer = null;
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.triggerChange = this.triggerChange.bind(this);
   }
 
+  componentDidMount() {
+    this.inputRef.current.focus();
+  }
+
   handleChange(e) {
     clearTimeout(this.timer);
 
     this.setState({ value: e.target.value });
-    const { onChange } = this.props;
 
-    onChange(e.target.value);
     this.timer = setTimeout(this.triggerChange, WAIT_INTERVAL);
   }
 
@@ -38,7 +41,6 @@ export default class InputComponent extends Component {
   triggerChange() {
     const { key, value } = this.state;
     const { onChange } = this.props;
-
     onChange(key, value);
   }
 
@@ -48,6 +50,7 @@ export default class InputComponent extends Component {
 
     return (
       <Input
+        ref={this.inputRef}
         className={className}
         name={name}
         value={value}
